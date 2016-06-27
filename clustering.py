@@ -59,7 +59,7 @@ n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
 unique_labels = set(labels)
 colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
 fig = plt.figure(2)
-centerPoint = []
+center_point = []
 
 for k, col in zip(unique_labels, colors):
     if k == -1:
@@ -73,12 +73,12 @@ for k, col in zip(unique_labels, colors):
              markeredgecolor='k', markersize=14)
 
     print "center pos %f %f" %(np.mean(xy[:, 0]), np.mean(xy[:, 1]) )
-    centerPoint.append([np.mean(xy[:, 1]), np.mean(xy[:, 0])])
+    center_point.append([np.mean(xy[:, 1]), np.mean(xy[:, 0])])
 
 
-# 供百度地图使用
+# json data for baidu map
 with open('clustering_points.js', 'w') as f:
-    f.write('var data = {"data": %s}' % json.dumps(centerPoint))
+    f.write('var data = {"data": %s}' % json.dumps(center_point))
 
 
 plt.title('DBSCAN :Estimated number of clusters: %d' % n_clusters_)
