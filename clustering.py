@@ -42,15 +42,13 @@ def distance(p1, p2):
 
 
 distance_matrix = squareform(pdist(X, (lambda u,v: distance(u,v))))
-db = DBSCAN(eps=0.2, min_samples=5, metric='precomputed')
+db = DBSCAN(eps=0.05, min_samples=3, metric='precomputed')
 labels = db.fit_predict(distance_matrix)
-
 
 # Plot
 fig = plt.figure(1)
 col = 'k'
-plt.plot(X[:, 0], X[:, 1], '*', markerfacecolor='k',
-         markeredgecolor='k', markersize=5)
+plt.plot(X[:, 0], X[:, 1], '*', markerfacecolor='k', markeredgecolor='k', markersize=5)
 
 core_samples_mask = np.zeros_like(labels, dtype=bool)
 core_samples_mask[db.core_sample_indices_] = True
@@ -60,6 +58,7 @@ unique_labels = set(labels)
 colors = plt.cm.Spectral(np.linspace(0, 1, len(unique_labels)))
 fig = plt.figure(2)
 center_point = []
+heatmap_point = []
 
 for k, col in zip(unique_labels, colors):
     if k == -1:
@@ -74,11 +73,14 @@ for k, col in zip(unique_labels, colors):
 
     print "center pos %f %f" %(np.mean(xy[:, 0]), np.mean(xy[:, 1]) )
     center_point.append([np.mean(xy[:, 1]), np.mean(xy[:, 0])])
+    heatmap_point.append({"lng": np.mean(xy[:, 1]), "lat": np.mean(xy[:, 0]), "count": len(xy[:, 1])})
 
 
 # json data for baidu map
 with open('clustering_points.js', 'w') as f:
     f.write('var data = {"data": %s}' % json.dumps(center_point))
+with open('heatmap_points.js', 'w') as f:
+    f.write('var points = %s' % json.dumps(heatmap_point))
 
 
 plt.title('DBSCAN :Estimated number of clusters: %d' % n_clusters_)
